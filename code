@@ -1,0 +1,145 @@
+package csd;
+
+class App 
+{
+	public static void main(String[] args) 
+	{
+		java.util.Scanner kb = new java.util.Scanner(System.in);
+		java.util.Random generator = new java.util.Random();
+		
+		int boardPC[][] = new int[10][10]; //Game board
+		int boardPL[][] = new int[10][10]; //Player's board
+		
+		int i, k, row, col, r, c, flag, countMines, countPlay, sumMines; 
+		
+		row = 10;
+		col = 10;
+		
+		//Game area is being created -- first matrix
+		for (i = 0; i < row; i = i + 1) 
+			for (k = 0; k < col; k = k + 1)
+				boardPC[i][k] = 9;
+		
+		//Game area is being created -- second matrix
+		for (i = 0; i < row; i = i + 1) 
+			for (k = 0; k < col; k = k + 1)
+				boardPL[i][k] = 9;	
+		
+		//Mines are being placed (randomly)
+		countMines = 0;
+		while (countMines != 25) {
+			r = generator.nextInt(row); 	//Generates random row number
+			c = generator.nextInt(col);	//Generates random column number
+
+			if (boardPC[r][c] != -1) {
+				boardPC[r][c] = -1;
+				countMines = countMines + 1;
+			}	
+		}
+
+		//View of the first matrix after the mines are placed
+		for (i = 0; i < row; i = i + 1) {
+			for (k = 0; k < col; k = k + 1) {
+				if (boardPC[i][k] >= 0)
+					System.out.print(" ");
+				System.out.print(boardPC[i][k] + " "); 
+				}
+			System.out.println();	
+		}
+		
+		System.out.println();
+		
+		countPlay = 0;
+		flag = 0;
+		while (flag == 0) {
+			sumMines = 0;
+			
+			System.out.print("row?: ");
+			r = kb.nextInt();
+			System.out.print("col?: ");
+			c = kb.nextInt();
+			countPlay = countPlay + 1;	//Counter is increased by 1 after each move
+			
+			
+			//Mines in the neighboring cells are being counted
+			//This part has to be improved 100%
+			if (c - 1 >= 0)
+				if (boardPC[r][c - 1] == -1)		//west
+					sumMines = sumMines + 1;
+			
+			if (r - 1 >= 0 && c - 1 >= 0)
+				if (boardPC[r - 1][c - 1] == -1)	//nortwest
+					sumMines = sumMines + 1;
+			
+			if (r - 1 >= 0)
+				if (boardPC[r - 1][c] == -1)		//north
+					sumMines = sumMines + 1;
+			
+			if (r - 1 >= 0 && c + 1 < col)
+				if (boardPC[r - 1][c + 1] == -1)	//northeast
+					sumMines = sumMines + 1;
+			
+			if (c + 1 < col)
+				if (boardPC[r][c + 1] == -1)		//east
+					sumMines = sumMines + 1;
+			
+			if (r + 1 < row && c + 1 < col)
+				if (boardPC[r + 1][c + 1] == -1)	//southeast
+					sumMines = sumMines + 1;
+			
+			if (r + 1 < row)
+				if (boardPC[r + 1][c] == -1)		//south
+					sumMines = sumMines + 1;
+			
+			if (r + 1 < row && c - 1 >= 0)
+				if (boardPC[r + 1][c - 1] == -1)	//southwest
+					sumMines = sumMines + 1;
+			
+			System.out.println();		
+			
+			//Sum of mines in the cells surrounding the area 
+			//is assigned to the second (player's) matrix
+			//If there's a mine in the cell, we assign -1
+			if (boardPC[r][c] != - 1)
+				boardPL[r][c] = sumMines;
+			else
+				boardPL[r][c] = -1;
+			
+			//Prints first matrix
+			for (i = 0; i < row; i = i + 1) {
+				for (k = 0; k < col; k = k + 1) {
+					if (boardPC[i][k] >= 0)
+						System.out.print(" ");
+					System.out.print(boardPC[i][k] + " "); 
+					}
+				System.out.println();	
+			}
+			
+			System.out.println();
+
+			//Prints second (player's) matrix
+			for (i = 0; i < row; i = i + 1) {
+				for (k = 0; k < col; k = k + 1) {
+					if (boardPL[i][k] >= 0)
+						System.out.print(" ");
+					System.out.print(boardPL[i][k] + " "); 
+					}
+				System.out.println();	
+			}
+			
+			System.out.println();
+			
+			//Well if you can see both boards
+			//You can definitely survive, but hey, need to check it anyways
+			if (boardPC[r][c] == -1) {
+				flag = 1;
+				System.out.println("STEPPED ON A MINE!");
+			}
+			else if (countPlay == 75) {
+				flag = 1;
+				System.out.println("YOU SURVIVED!");
+			}
+		}
+		System.out.print("GAME OVER");	
+	}
+}
